@@ -15,8 +15,8 @@ app.use(cors(corOptions))
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-app.use('/api/products', product);
 app.use('/api/auth/', user);
+app.use('/api/products', product);
 
 //test
 

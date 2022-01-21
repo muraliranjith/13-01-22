@@ -23,7 +23,9 @@ router.get('/allProducts',[auth], userController.getAllProducts)
 
 router.get('/getOne', [auth],userController.getOneProduct)
 
-router.get('/pagnation/', [auth],userController.pagnation)
+// router.get('/pagnation/', [auth],userController.pagnation)
+
+router.get('/sorting/', [auth],userController.sorting)
 
 router.put('/updateProduct/:id',[auth],  userController.updateProduct)
 

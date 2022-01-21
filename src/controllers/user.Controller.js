@@ -1,8 +1,7 @@
 const db = require('../models');
 const productSrvice = require('../services/products.services')
-const { base64encode, base64decode } = require('nodejs-base64');
 const fs = require('fs')
-const { pick, pickLike, pickGTE, pickLTE } = require('../utils/pick')
+const { pick, pickLike, pickGTE, pickLTE, pickEQ } = require('../utils/pick')
 
 
 const Product = db.products;
@@ -40,10 +39,16 @@ const uploadProduct = (req, res) => {
 }
 const getAllProducts = async (req, res) => {
 
-    const filter = pick(req.query, ['name', 'scanStatus', 'imageType', 'imageName']);
+    const filter = pick(req.query, ['name', 'title', 'description', 'path', 'price', 'published']);
     let lteFilter = {};
     let gteFilter = {};
     let nameFilter = {};
+    let nameFilter1 = {};
+    let nameFilter2 = {};
+    let nameFilter3 = {};
+    let nameFilter4 = {};
+    let nameFilter5 = {};
+
     if (req.body.fromDate && req.body.fromDate != '') {
         const data = pickGTE(req.body, ['fromDate']);
         gteFilter = { createdAt: data.fromDate }
@@ -52,24 +57,58 @@ const getAllProducts = async (req, res) => {
         const data = pickLTE(req.body, ['toDate']);
         lteFilter = { updatedAt: data.toDate }
     }
-    if (req.body.name && req.body.name != '') {
-        const data = pickLike(req.body, ['name']);
-        nameFilter = { name: data.name }
-        console.log(nameFilter);
+    if (req.body.name && req.body.name != '' || req.body.title && req.body.title != '' || req.body.description && req.body.description != '' || req.body.path && req.body.path != '' || req.body.published && req.body.published != '') {
+        const data = pickLike(req.body, ['name', 'title', 'description', 'path', 'price', 'published']);
+        if (req.body.name) {
+            nameFilter = { name: data.name }
+        } else if (req.body.title) {
+            nameFilter1 = { title: data.title }
+        } else if (req.body.description) {
+            nameFilter2 = { description: data.description }
+        } else if (req.body.path) {
+            nameFilter3 = { path: data.path }
+        } else if (req.body.published) {
+            nameFilter5 = { published: data.published }
+        }
     }
-    const options = pick(req.body, ['limit', 'page']);
-    const payload = { ...filter, ...gteFilter, ...lteFilter, ...nameFilter }
-    console.log(options);
+    if (req.body.price && req.body.price != '') {
+        const data = pickEQ(req.body, ['price']);
+        nameFilter4 = { price: data.price }
+    }
+    const payload = { ...filter, ...gteFilter, ...lteFilter, ...nameFilter, ...nameFilter1, ...nameFilter2, ...nameFilter3, ...nameFilter4, ...nameFilter5 }
     const result = await productSrvice.queryFiles(payload);
     res.send(result)
 }
 
-const pagnation = async (req, res) => {
+// const pagnation = async (req, res) => {
+
+//     const options = pick(req.body, ['limit', 'page']);
+//     const result = await Product.findAndCountAll(options)
+//     res.send(result)
+// }
+const sorting = async (req, res) => {
 
     const options = pick(req.body, ['limit', 'page']);
-    const result = await Product.findAndCountAll(options)
-    res.send(result)
+    const name = (req.body.name || req.body.title || req.body.description || req.body.path || req.body.published);
+    const order = req.body.order;
+    
+    if (name || options) {
+
+        if (name !== undefined) {
+            const result = await Product.findAndCountAll({ order: [[`${name}`, `${order}`]] });
+            res.send(result)
+        } else if (options !== undefined) {
+            const result = await Product.findAll(options)
+            
+            res.send(result)
+        } else {
+            res.status(400).send("Enter your Request")
+        }
+
+    }
+
 }
+
 const getOneProduct = async (req, res) => {
 
     let id = req.body.id;
@@ -103,5 +142,6 @@ module.exports = {
     updateProduct,
     deleteProduct,
     uploadProduct,
-    pagnation
+    // pagnation,
+    sorting
 }

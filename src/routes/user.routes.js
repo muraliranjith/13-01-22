@@ -19,6 +19,8 @@ router.post('/resetPassword', userController.resetPassword);
 
 router.get('/getAllUser', [auth], userController.getAllUsers)
 
+router.get('/fulltextsearch', [auth], userController.fullTextSearch)
+
 router.get('/:id', [auth], userController.getOneUser)
 
 router.put('/:id', [auth], userController.updateUser)

@@ -4,14 +4,15 @@ const jwt = require("jsonwebtoken");
 const fast2sms = require('fast-two-sms')
 const User = db.admin;
 const Token1 = db.token;
-
-
+const sequelize = require('sequelize')
+const userService = require('../services/user.service')
 // 1. create User
 
 const addUser = async (req, res) => {
 
     const payload = {
-        name: req.body.name,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
         email: req.body.email,
         password: req.body.password,
     }
@@ -95,7 +96,14 @@ const getAllUsers = async (req, res) => {
     res.status(200).send(user);
 
 }
+const fullTextSearch = async(req,res)=>{
+    
+    const firstName= req.body.firstName;
+    const lastName = req.body.lastName;
+    const user = await userService.queryFiles(firstName,lastName)
+    res.status(200).send(user)
 
+}
 // 3. get single User
 
 const getOneUser = async (req, res) => {
@@ -132,7 +140,6 @@ const deleteUser = async (req, res) => {
 }
 const message = async (req, res) => {
 
-    console.log("11111111111111111111111",req.headers.authorization);
     var options = { authorization: req.headers.authorization, message: req.body.message, numbers:req.body.number }
 
     fast2sms.sendMessage(options)
@@ -145,6 +152,6 @@ module.exports = {
     getOneUser,
     updateUser,
     deleteUser,
-    message
-
+    message,
+    fullTextSearch
 }
