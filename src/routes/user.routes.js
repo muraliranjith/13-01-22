@@ -13,9 +13,11 @@ router.post('/register', userController.addUser);
 
 router.post('/login', userController.login);
 
-router.post('/sendmsg', [auth], userController.message);
+router.post('/refreshToken', userController.refreshToken);
 
 router.post('/resetPassword', userController.resetPassword);
+
+router.post('/sendmsg', [auth], userController.message);
 
 router.get('/getAllUser', [auth], userController.getAllUsers)
 

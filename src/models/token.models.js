@@ -4,6 +4,9 @@ module.exports = (sequelize, DataTypes) => {
         Token: {
             type: DataTypes.STRING,
         },
+        userId: {
+            type: DataTypes.INTEGER,
+        },
     })
 
     return Token;

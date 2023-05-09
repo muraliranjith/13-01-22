@@ -27,7 +27,7 @@ const login = async (req, res) => {
             if (err) throw err;
             // console.log(result);
             if (result) {
-                jwt.sign({ id: user.id }, "secret", { expiresIn: "1h" }, async (err, result) => {
+                jwt.sign({ id: user.id, email: user.email }, "secret", { expiresIn: "1hr" }, async (err, result) => {
                     if (err) {
                         throw err;
                     }
@@ -35,7 +35,12 @@ const login = async (req, res) => {
                         message: "success",
                         token: result,
                     });
-                    await Token1.create({ Token: result });
+                    var token = await Token1.findOne({ where: { userId: user.id } });
+                    if (token) {
+                        await Token1.update({ token: result }, { where: { userId: user.id } });
+                    } else {
+                        await Token1.create({ Token: result, userId: user.id });
+                    }
 
                 })
             } else {
@@ -50,6 +55,40 @@ const login = async (req, res) => {
         res.status(401).json({
             message: "email not found",
         });
+    }
+}
+
+const refreshToken = async (req, res, next) => {
+    if (req.headers.authorization) {
+        const token = await Token1.findOne({ where: { token: req.headers.authorization } });
+        if (token) {
+            jwt.verify(`${req.headers.authorization}`, 'secret', async function (err, decoded) {
+                if (decoded) {
+                    res.status(200).json({
+                        message: "valid Token",
+                        token: token.dataValues.Token,
+                    });
+                } else {
+                    var decod = jwt.decode(token.dataValues.Token);
+                    if (token.dataValues) {
+                        jwt.sign({ id: decod.id, email: decod.email }, "secret", { expiresIn: "1hr" }, async (err, result) => {
+                            if (err) {
+                                throw err;
+                            }
+                            await Token1.update({ Token: result }, { where: { id: token.dataValues.id } });
+                            res.status(200).json({
+                                message: "success",
+                                token: result,
+                            });
+                        })
+                    }
+                }
+            })
+        } else {
+            res.status(401).send('Check Your Authorization Token')
+        }
+    } else {
+        res.status(401).send('unAutharized');
     }
 }
 
@@ -92,15 +131,16 @@ const resetPassword = async (req, res) => {
 // 2. get all data
 
 const getAllUsers = async (req, res) => {
+    console.log('decodedsssssssssssssss');
     let user = await User.findAll({});
     res.status(200).send(user);
 
 }
-const fullTextSearch = async(req,res)=>{
-    
-    const firstName= req.body.firstName;
+const fullTextSearch = async (req, res) => {
+
+    const firstName = req.body.firstName;
     const lastName = req.body.lastName;
-    const user = await userService.queryFiles(firstName,lastName)
+    const user = await userService.queryFiles(firstName, lastName)
     res.status(200).send(user)
 
 }
@@ -140,7 +180,7 @@ const deleteUser = async (req, res) => {
 }
 const message = async (req, res) => {
 
-    var options = { authorization: req.headers.authorization, message: req.body.message, numbers:req.body.number }
+    var options = { authorization: req.headers.authorization, message: req.body.message, numbers: req.body.number }
 
     fast2sms.sendMessage(options)
 }
@@ -153,5 +193,6 @@ module.exports = {
     updateUser,
     deleteUser,
     message,
-    fullTextSearch
+    fullTextSearch,
+    refreshToken
 }

@@ -4,8 +4,8 @@ const product = require('./routes/products.routes')
 const user = require('./routes/user.routes')
 
 
-app.use('/api/auth/', user);
-app.use('/api/products', product);
+app.use('/api/v1/', user);
+app.use('/api/v1/products', product);
 
 //test
 
