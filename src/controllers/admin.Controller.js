@@ -9,15 +9,25 @@ const userService = require('../services/user.service')
 // 1. create User
 
 const addUser = async (req, res) => {
+    const {firstName, lastName, email, password } = req.body;
+    if (firstName, lastName, email, password) {     
+        const payload = {
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            email: req.body.email,
+            password: req.body.password,
+        }
+        const useremail = await User.findOne({ where: { email: email } });
+        if (!useremail) {
+            const user = await User.create(payload);
+        res.status(200).send(user);
 
-    const payload = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email,
-        password: req.body.password,
+        } else {
+            res.status(200).json({message: 'user already exist'});
+        }
+    } else {
+        res.status(400).json({message: " please give all request"});
     }
-    const user = await User.create(payload);
-    res.status(200).send(user);
 }
 
 const login = async (req, res) => {

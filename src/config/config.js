@@ -3,7 +3,7 @@
 module.exports = {
     HOST: "localhost",
     USER: "root",
-    PASSWORD: "password",
+    PASSWORD: "Password_123",
     DB: "project",
     dialect: "mysql",
     pool: {
@@ -12,7 +12,7 @@ module.exports = {
       acquire: 30000,
       idle: 10000
     },
-    PORT:4040,
+    PORT:3000,
   };
 
 //postgres

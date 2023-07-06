@@ -2,7 +2,7 @@
 FROM node:14-alpine
 
 # Set the working directory to /app
-WORKDIR /usr/src/app
+WORKDIR /user/src/app
 
 # Copy the package.json and package-lock.json files to the container
 COPY package*.json ./
@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the application
-CMD ["npm", "src/index.js"]
+CMD ["npm", "run", "start"]
