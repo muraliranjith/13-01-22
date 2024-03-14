@@ -28,11 +28,10 @@ const deleteRedisRecord = async (tableName, payload, id) => {
 const updateRedisRecord = async (tableName, payload, id) => {
       // Update the record from the array
       const getAllRecord = await getAllrecordFromRedis(tableName);
-      console.log('getAllRecord', getAllRecord);
       const indexToUpdate = getAllRecord.findIndex((item) => item.id === id);
-      console.log('getAllRecord', getAllRecord);
       getAllRecord[indexToUpdate] = payload;
-      // await insertRedisRecord(tableName, payload);
+      const allData = getAllRecord;
+      await insertRedisRecord(tableName, allData);
   };
 const getAllrecordFromRedis = async (tableName) => {
   const products = await redisClient.get(tableName);
