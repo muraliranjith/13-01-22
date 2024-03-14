@@ -29,9 +29,10 @@ const getOneProduct = (async (id) => {
 })
 
 const updateProduct = (async (body, id) => {
-
-    const product = await Product.update(body, id);
-    return product;
+    const getId = id.where.id;
+    await Product.update(body, id);
+    const result = await getOneProduct(getId);
+    return result;
 })
 module.exports = {
     addProducts,

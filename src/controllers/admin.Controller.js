@@ -168,7 +168,7 @@ const getOneUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
 
-    let id = req.body.id;
+    let id = req.params.id;
 
     const user = await User.update(req.body, { where: { id: id } });
 

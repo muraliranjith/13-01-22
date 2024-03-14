@@ -21,7 +21,7 @@ router.post('/uploadimage/:id',[auth],upload, userController.uploadProduct)
 
 router.get('/allProducts',[auth], userController.getAllProducts)
 
-router.get('/getOne', [auth],userController.getOneProduct)
+router.get('/getOne/:id', [auth],userController.getOneProduct)
 
 // router.get('/pagnation/', [auth],userController.pagnation)
 
@@ -29,7 +29,7 @@ router.get('/sorting/', [auth],userController.sorting)
 
 router.put('/updateProduct/:id',[auth],  userController.updateProduct)
 
-router.delete('/deleteProduct',[auth], userController.deleteProduct)
+router.delete('/deleteProduct/:id',[auth], userController.deleteProduct)
 
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const express = require('express')
-const cors = require('cors')
+const cors = require('cors');
+// const red = require('../src/middlewares/redisClient');
 const app = express();
 
 var corOptions = {
